@@ -1,23 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from 'react';
+import { APIUtils } from './common/utilities/APIUtils';
+import { ObserverTable } from './components/ObserverTable';
+import { vehicleMakeStore } from './stores/makeStore';
 
 function App() {
+  const { fetchMakeList, addMake } = APIUtils();
+  useEffect(() => {
+    fetchMakeList();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button
+        onClick={(e) => addMake({ id: '', name: 'TestAdd', abrv: 'TestAdd' })}
+      >
+        Add new{' '}
+      </button>
+      <ObserverTable observable={vehicleMakeStore}></ObserverTable>
     </div>
   );
 }
