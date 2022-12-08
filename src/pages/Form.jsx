@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { observer } from 'mobx-react-lite';
 
 import { APIUtils } from 'common/utilities';
 import { ErrorMsg, FormSelect, FormInput } from 'components';
+import { FormLayout } from 'layouts';
 
 export const Form = observer(({ observable, schemaName }) => {
   const { addItem, fetchAllMakes, getItemById, updateItem } = APIUtils();
@@ -20,18 +21,14 @@ export const Form = observer(({ observable, schemaName }) => {
     const res = await getItemById(id, schemaName);
     setName(res.name);
     setAbrv(res.abrv);
-    const makeExists = observable.data.list.filter(
-      (item) => item.id === res.makeId
-    )[0];
+    const makeExists = await observable.getItemById(res.makeId)[0];
     if (makeExists) {
-      setMake(
-        observable.data.list.filter((item) => item.id === res.makeId)[0].id
-      );
+      setMake(makeExists.id);
+      setError('');
     } else if (isModel) {
       setError(`Make does not exist`);
     }
   };
-
   const onSubmit = (e) => {
     e.preventDefault();
     if (isModel) {
@@ -75,7 +72,9 @@ export const Form = observer(({ observable, schemaName }) => {
   }, [observable]);
 
   return (
-    <form onSubmit={onSubmit}>
+    <FormLayout submitHandler={onSubmit}>
+      <FormInput inputValue={name} inputName={'Name'} onSetInput={setName} />
+      <FormInput inputValue={abrv} inputName={'Abrv'} onSetInput={setAbrv} />
       {isModel ? (
         <FormSelect
           value={make}
@@ -83,11 +82,7 @@ export const Form = observer(({ observable, schemaName }) => {
           options={observable?.data.list}
         />
       ) : null}
-      {error && !make ? <ErrorMsg msg={error} /> : null}
-      <br />
-      <FormInput inputValue={name} inputName={'Name'} onSetInput={setName} />
-      <FormInput inputValue={abrv} inputName={'Abrv'} onSetInput={setAbrv} />
-      <button>Submit</button>
-    </form>
+      <ErrorMsg msg={error} />
+    </FormLayout>
   );
 });

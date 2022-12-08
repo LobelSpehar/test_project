@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
-import { Form, Table } from 'pages';
+import { Table, Form } from 'pages';
 import { Layout } from 'layouts';
 import { vehicleMakeStore, vehicleModelStore } from 'stores';
 
@@ -37,27 +37,27 @@ function App() {
           }
         />
         <Route
-          path='/add/vehicleMake/'
-          element={
-            <Form observable={vehicleModelStore} schemaName={'vehicleMake'} />
-          }
-        />
-        <Route
-          path='/edit/vehicleMake/:id'
-          element={
-            <Form observable={vehicleModelStore} schemaName={'vehicleMake'} />
-          }
-        />
-        <Route
           path='/add/vehicleModel/'
           element={
-            <Form observable={vehicleMakeStore} schemaName={'vehicleModel'} />
+            <Form observable={vehicleModelStore} schemaName={'vehicleModel'} />
           }
         />
         <Route
           path='/edit/vehicleModel/:id'
           element={
-            <Form observable={vehicleMakeStore} schemaName={'vehicleModel'} />
+            <Form observable={vehicleModelStore} schemaName={'vehicleModel'} />
+          }
+        />
+        <Route
+          path='/add/vehicleMake/'
+          element={
+            <Form observable={vehicleMakeStore} schemaName={'vehicleMake'} />
+          }
+        />
+        <Route
+          path='/edit/vehicleMake/:id'
+          element={
+            <Form observable={vehicleMakeStore} schemaName={'vehicleMake'} />
           }
         />
         <Route path='*' element={<div>Error pathname has no match</div>} />

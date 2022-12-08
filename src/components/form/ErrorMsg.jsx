@@ -3,6 +3,7 @@ export function ErrorMsg({ msg }) {
     <>
       <br />
       <span id='error'>{msg}</span>
+      <br />
     </>
   );
 }
