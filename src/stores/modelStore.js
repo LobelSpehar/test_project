@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
 
-class VehicleMakeStore {
+class VehicleModelStore {
   data = observable.object({ total: 0, list: [] });
 
   setData = action((total, array) => {
@@ -9,4 +9,4 @@ class VehicleMakeStore {
   });
 }
 
-export const vehicleMakeStore = new VehicleMakeStore();
+export const vehicleModelStore = new VehicleModelStore();
