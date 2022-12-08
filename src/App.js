@@ -9,8 +9,8 @@ function App() {
   const navLinks = [
     { path: '/models', title: 'Models' },
     { path: '/makes', title: 'Makes' },
-    { path: '/add/make', title: 'Add make' },
-    { path: '/add/model', title: 'Add model' },
+    { path: '/add/vehicleMake/', title: 'Add make' },
+    { path: '/add/vehicleModel/', title: 'Add model' },
   ];
   const pathname = useLocation().pathname;
   const navigate = useNavigate();
@@ -36,14 +36,30 @@ function App() {
             <Table observable={vehicleModelStore} schemaName={'vehicleModel'} />
           }
         />
-        <Route path='/add/make' element={<Form schemaName={'vehicleMake'} />} />
         <Route
-          path='/add/model'
+          path='/add/vehicleMake/'
+          element={
+            <Form observable={vehicleModelStore} schemaName={'vehicleMake'} />
+          }
+        />
+        <Route
+          path='/edit/vehicleMake/:id'
+          element={
+            <Form observable={vehicleModelStore} schemaName={'vehicleMake'} />
+          }
+        />
+        <Route
+          path='/add/vehicleModel/'
           element={
             <Form observable={vehicleMakeStore} schemaName={'vehicleModel'} />
           }
         />
-
+        <Route
+          path='/edit/vehicleModel/:id'
+          element={
+            <Form observable={vehicleMakeStore} schemaName={'vehicleModel'} />
+          }
+        />
         <Route path='*' element={<div>Error pathname has no match</div>} />
       </Routes>
     </Layout>

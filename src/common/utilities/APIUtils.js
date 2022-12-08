@@ -20,7 +20,17 @@ export function APIUtils() {
     });
     const result = await rawResponse;
   };
-  const updateItem = async (id, schemaName) => {};
+  const updateItem = async (data, schemaName) => {
+    const rawResponse = await fetch(path + schemaName + '/' + data.id, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
+    const result = await rawResponse;
+  };
   const fetchAllMakes = async (db) => {
     const rawResponse = await fetch(
       path + `VehicleMake/?page=1&rpp=1000&sort=name`,
@@ -29,6 +39,13 @@ export function APIUtils() {
     const result = await rawResponse.json();
 
     db.setData(result.totalRecords, result.item);
+  };
+  const getItemById = async (id, schemaName) => {
+    const rawResponse = await fetch(path + schemaName + '/' + id, {
+      method: 'GET',
+    });
+    const result = await rawResponse.json();
+    return await result;
   };
   const fetchItems = async (
     page = 0,
@@ -45,5 +62,12 @@ export function APIUtils() {
 
     store.setData(result.totalRecords, result.item);
   };
-  return { fetchItems, addItem, delItem, fetchAllMakes };
+  return {
+    fetchItems,
+    addItem,
+    delItem,
+    fetchAllMakes,
+    getItemById,
+    updateItem,
+  };
 }

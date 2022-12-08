@@ -1,74 +1,92 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { APIUtils } from 'common/utilities';
 import { observer } from 'mobx-react-lite';
 
+import { APIUtils } from 'common/utilities';
+import { ErrorMsg, FormSelect, FormInput } from 'components';
+
 export const Form = observer(({ observable, schemaName }) => {
-  const { addItem, fetchAllMakes } = APIUtils();
+  const { addItem, fetchAllMakes, getItemById, updateItem } = APIUtils();
   const [name, setName] = useState('');
   const [abrv, setAbrv] = useState('');
   const [make, setMake] = useState('');
+  const [error, setError] = useState('');
   const isModel = schemaName === 'vehicleModel';
-  useEffect(() => {
-    if (isModel) {
-      fetchAllMakes(observable);
+  const paramId = useParams().id;
+  const navigate = useNavigate();
+
+  const getData = async (id) => {
+    const res = await getItemById(id, schemaName);
+    setName(res.name);
+    setAbrv(res.abrv);
+    const makeExists = observable.data.list.filter(
+      (item) => item.id === res.makeId
+    )[0];
+    if (makeExists) {
+      setMake(
+        observable.data.list.filter((item) => item.id === res.makeId)[0].id
+      );
+    } else if (isModel) {
+      setError(`Make does not exist`);
     }
-  }, [observable]);
+  };
 
   const onSubmit = (e) => {
     e.preventDefault();
     if (isModel) {
-      addItem({ id: null, name: name, abrv: abrv, makeId: make }, schemaName);
+      if (paramId) {
+        updateItem(
+          { id: paramId, name: name, abrv: abrv, makeId: make },
+          schemaName
+        );
+        setTimeout(() => navigate('/models'), 200);
+      } else {
+        addItem(
+          { id: paramId, name: name, abrv: abrv, makeId: make },
+          schemaName
+        );
+      }
     } else {
-      addItem({ id: null, name: name, abrv: abrv }, schemaName);
+      if (paramId) {
+        updateItem({ id: paramId, name: name, abrv: abrv }, schemaName);
+        setTimeout(() => navigate('/makes'), 200);
+      } else {
+        addItem({ id: paramId, name: name, abrv: abrv }, schemaName);
+      }
     }
-    console.log({ id: null, name: name, abrv: abrv, make: make }, schemaName);
+
     setName('');
     setAbrv('');
     setMake('');
   };
+
+  useEffect(() => {
+    if (isModel) {
+      fetchAllMakes(observable);
+    }
+    if (paramId) {
+      getData(paramId);
+    } else {
+      setName('');
+      setAbrv('');
+      setMake('');
+    }
+  }, [observable]);
+
   return (
     <form onSubmit={onSubmit}>
       {isModel ? (
-        <>
-          <label>Make</label>
-          <br />
-          <select
-            value={make}
-            required
-            onChange={(e) => setMake(e.target.value)}
-          >
-            <option value='' hidden>
-              Select make
-            </option>
-            {observable?.data.list.map((make) => (
-              <option key={make.id} value={make.id}>
-                {make.name}
-              </option>
-            ))}
-          </select>
-          <br />
-        </>
+        <FormSelect
+          value={make}
+          onSelect={setMake}
+          options={observable?.data.list}
+        />
       ) : null}
-      <label htmlFor={'name'}>Name</label>
+      {error && !make ? <ErrorMsg msg={error} /> : null}
       <br />
-      <input
-        required
-        id={'name'}
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      ></input>
-      <br />
-      <label htmlFor={'abrv'}>Abrv</label>
-      <br />
-      <input
-        required
-        id={'abrv'}
-        value={abrv}
-        onChange={(e) => setAbrv(e.target.value)}
-      ></input>
-      <br />
-
+      <FormInput inputValue={name} inputName={'Name'} onSetInput={setName} />
+      <FormInput inputValue={abrv} inputName={'Abrv'} onSetInput={setAbrv} />
       <button>Submit</button>
     </form>
   );

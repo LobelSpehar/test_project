@@ -3,9 +3,8 @@ import { useLocation } from 'react-router-dom';
 
 import { observer } from 'mobx-react';
 
+import { APIUtils } from 'common/utilities';
 import { TableRow, TableHead, Pagination } from 'components';
-
-import { APIUtils } from 'common//utilities';
 
 export const Table = observer(({ observable, schemaName }) => {
   const { fetchItems, delItem } = APIUtils();
@@ -23,6 +22,9 @@ export const Table = observer(({ observable, schemaName }) => {
     refresh();
   }, [page, sortBy, rpp, pathname]);
 
+  if (total - rpp * page === 0 && page !== 0) {
+    setPage(page - 1);
+  }
   return (
     <>
       <table>

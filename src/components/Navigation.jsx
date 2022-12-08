@@ -1,4 +1,6 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
+import { NavBtn } from 'components';
 
 export function Navigation({ navLinks }) {
   const pathname = useLocation().pathname;
@@ -7,14 +9,7 @@ export function Navigation({ navLinks }) {
       <ul>
         {navLinks.map((link) => (
           <li key={link.title}>
-            <Link
-              style={
-                pathname === link.path ? { backgroundColor: '#01b893' } : null
-              }
-              to={link.path}
-            >
-              {link.title}
-            </Link>
+            <NavBtn link={link} pathname={pathname} />
           </li>
         ))}
       </ul>

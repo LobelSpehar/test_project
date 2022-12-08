@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+
 export function TableRow({
   page,
   rpp,
@@ -8,6 +10,7 @@ export function TableRow({
   schemaName,
 }) {
   var trList = [];
+  const navigate = useNavigate();
   for (var key in item) {
     if (key !== 'id') {
       trList.push(item[key]);
@@ -21,6 +24,13 @@ export function TableRow({
         <td key={index}>{item}</td>
       ))}
       <td>
+        <button
+          onClick={(e) => {
+            navigate(`/edit/${schemaName}/${item.id}`);
+          }}
+        >
+          Edit
+        </button>
         <button
           onClick={(e) => {
             onDelete(item.id, schemaName, onRefresh);
