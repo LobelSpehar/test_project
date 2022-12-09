@@ -31,28 +31,12 @@ export function APIUtils() {
     });
     const result = await rawResponse;
   };
-  const fetchAllMakes = async (db) => {
-    const rawResponse = await fetch(
-      path + `VehicleMake/?page=1&rpp=1000&sort=name`,
-      { method: 'GET' }
-    );
-    const result = await rawResponse.json();
 
-    db.setData(result.totalRecords, result.item);
-  };
-  const getItemById = async (id, schemaName) => {
-    const rawResponse = await fetch(path + schemaName + '/' + id, {
-      method: 'GET',
-    });
-    const result = await rawResponse.json();
-    return await result;
-  };
   const fetchItems = async (
     page = 0,
     rpp = 10,
     sortBy = 'name',
-    schemaName,
-    store
+    schemaName
   ) => {
     const rawResponse = await fetch(
       path + schemaName + `/?page=${page + 1}&rpp=${rpp}&sort=${sortBy}`,
@@ -60,14 +44,42 @@ export function APIUtils() {
     );
     const result = await rawResponse.json();
 
-    store.setData(result.totalRecords, result.item);
+    return await {
+      total: result.totalRecords,
+      list: result.item,
+    };
   };
+
+  const searchMakes = async (input) => {
+    const rawResponse = await fetch(
+      path +
+        `vehicleMake/?page=1&rpp=5&searchQuery=WHERE name LIKE '%${input}%' OR abrv like '%${input}%'`,
+      {
+        method: 'GET',
+      }
+    );
+    const result = await rawResponse.json();
+
+    return await result.item;
+  };
+  const getMakeById = async (id) => {
+    const rawResponse = await fetch(
+      path + `vehicleMake/?page=1&rpp=1&searchQuery=WHERE id = '${id}'`,
+      {
+        method: 'GET',
+      }
+    );
+    const result = await rawResponse.json();
+
+    return await result;
+  };
+
   return {
     fetchItems,
     addItem,
     delItem,
-    fetchAllMakes,
-    getItemById,
+    getMakeById,
     updateItem,
+    searchMakes,
   };
 }

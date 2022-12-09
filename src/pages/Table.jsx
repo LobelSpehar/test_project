@@ -1,32 +1,28 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-
-import { observer } from 'mobx-react';
 
 import { APIUtils } from 'common/utilities';
 import { TableRow, TableHead, Pagination } from 'components';
 
-export const Table = observer(({ observable, schemaName }) => {
-  const { fetchItems, delItem } = APIUtils();
+export function Table({ list, total, schemaName, refresh }) {
+  const { delItem } = APIUtils();
   const [page, setPage] = useState(0);
   const [sortBy, setSortBy] = useState('name');
   const [rpp, setRpp] = useState(10);
-  const pathname = useLocation().pathname;
-
-  const list = observable.data.list;
-  const total = observable.data.total;
-  const refresh = () => {
-    fetchItems(page, rpp, sortBy, schemaName, observable);
+  const onRefresh = () => {
+    refresh(page, rpp, sortBy, schemaName);
   };
   useEffect(() => {
-    refresh();
-  }, [page, sortBy, rpp, pathname]);
+    onRefresh();
+  }, [page, sortBy, rpp]);
 
+  //after deleting last item on the page,go to previous page
   if (total - rpp * page === 0 && page !== 0) {
     setPage(page - 1);
   }
+
   return (
-    <>
+    <div>
+      <h2>{schemaName}</h2>
       <table>
         <TableHead
           obj={list[0]}
@@ -39,13 +35,11 @@ export const Table = observer(({ observable, schemaName }) => {
         <tbody>
           {list.map((item, index) => (
             <TableRow
-              page={page}
-              rpp={rpp}
               key={item.id}
+              position={page * rpp + index + 1}
               item={item}
-              index={index}
               onDelete={delItem}
-              onRefresh={refresh}
+              onRefresh={onRefresh}
               schemaName={schemaName}
             />
           ))}
@@ -54,6 +48,6 @@ export const Table = observer(({ observable, schemaName }) => {
       {total ? (
         <Pagination total={total} page={page} setPage={setPage} rpp={rpp} />
       ) : null}
-    </>
+    </div>
   );
-});
+}

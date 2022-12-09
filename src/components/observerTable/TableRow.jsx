@@ -1,16 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 
-export function TableRow({
-  page,
-  rpp,
-  item,
-  index,
-  onDelete,
-  onRefresh,
-  schemaName,
-}) {
-  var trList = [];
+export function TableRow({ position, item, onDelete, onRefresh, schemaName }) {
   const navigate = useNavigate();
+  var trList = [];
+
+  //create table data for each property in object except id
   for (var key in item) {
     if (key !== 'id') {
       trList.push(item[key]);
@@ -19,7 +13,7 @@ export function TableRow({
 
   return (
     <tr>
-      <td>{page * rpp + index + 1}</td>
+      <td>{position}</td>
       {trList.map((item, index) => (
         <td key={index}>{item}</td>
       ))}

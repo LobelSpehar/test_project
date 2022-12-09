@@ -1,2 +1,1 @@
-export * from 'stores/makeStore';
-export * from 'stores/modelStore';
+export * from 'stores/dbStore';

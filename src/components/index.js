@@ -5,4 +5,5 @@ export * from 'components/observerTable/TableRow';
 export * from 'components/navigation/NavBtn';
 export * from 'components/form/ErrorMsg';
 export * from 'components/form/FormInput';
-export * from 'components/form/FormSelect';
+export * from 'components/observerTable/pagination/ChangePageBtn';
+export * from 'components/observerTable/tableHead/RppSelect';

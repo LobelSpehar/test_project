@@ -79,16 +79,24 @@ nav {
 }
 ul {
   margin: 0;
+  background-color: white;
   padding: 0;
   width: fit-content;
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-
   margin-bottom: 5px;
 }
+#searchRes {
+  padding: 2px;
+  border-radius: 5px;
+  width: 150px;
+}
 li {
-  margin-left: 2px;
+  margin: 2px;
+}
+.selected {
+  background-color: #01b893;
 }
 
 #paging {
@@ -112,4 +120,19 @@ form {
 #error {
   color: rgb(192, 23, 23);
   font-weight: bold;
+}
+#home {
+  width: 100vw;
+  justify-content: space-around;
+  display: flex;
+  flex-direction: row;
+}
+h2 {
+  width: fit-content;
+  margin: auto;
+  padding: 10px;
+  background-color: #009879;
+  color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
