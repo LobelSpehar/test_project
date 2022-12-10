@@ -6,14 +6,14 @@ import { toJS } from 'mobx';
 
 import { dbStore } from 'stores';
 import { APIUtils } from 'common/utilities';
-import { ErrorMsg, FormInput } from 'components';
+import { ErrorMsg, FormInput, FormSearchResults } from 'components';
 import { FormLayout } from 'layouts';
 
 export const ModelForm = observer(({ observable = dbStore }) => {
-  const { addItem, updateItem, searchMakes, getMakeById } = APIUtils();
+  const { addItem, updateItem, searchByNameAndAbrv, findById } = APIUtils();
   const [name, setName] = useState('');
   const [abrv, setAbrv] = useState('');
-  const [make, setMake] = useState('test');
+  const [make, setMake] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [searchRes, setSearchRes] = useState([]);
   const [error, setError] = useState('');
@@ -22,17 +22,36 @@ export const ModelForm = observer(({ observable = dbStore }) => {
   const paramId = useParams().id;
   const navigate = useNavigate();
 
+  //empty all form fields
+  const clearForm = () => {
+    setName('');
+    setAbrv('');
+    setMake('');
+    setSearchInput('');
+    setSearchRes([]);
+  };
+
   const setItemAsDefault = async (id) => {
-    //get name, abrv and makeId from paramId to set as default
-    let modelsList = toJS(observable.modelList);
-    let defaultData = modelsList.find((item) => item.id === id);
+    //fetching model name,abrv and makeId from store by paramId to set it as default
+    let defaultData = toJS(observable.getModelById(id));
+    if (!defaultData) {
+      defaultData = await findById(id, schemaName);
+      console.log(defaultData);
+    }
     setName(defaultData.name);
     setAbrv(defaultData.abrv);
 
-    // ne radi mathchanje makeId-a s bazom *******************************************************************
-    console.log(await getMakeById(defaultData.makeId));
+    //get make name from makeId to set it as default
+    let makeRes = await findById(defaultData.makeId, 'vehicleMake');
+    if (typeof makeRes === 'object') {
+      setSearchRes([makeRes]);
+      setMake(makeRes.id);
+    } else {
+      setError('Make not found');
+    }
   };
 
+  //add model, or update if it already has id
   const onSubmit = (e) => {
     e.preventDefault();
 
@@ -43,21 +62,18 @@ export const ModelForm = observer(({ observable = dbStore }) => {
       );
       setTimeout(() => navigate('/home'), 200);
     } else {
-      addItem(
-        { id: paramId, name: name, abrv: abrv, makeId: make },
-        schemaName
-      );
-      setName('');
-      setAbrv('');
-      setMake('');
+      addItem({ id: null, name: name, abrv: abrv, makeId: make }, schemaName);
+      clearForm();
     }
   };
-  //search makes by name
-  const searchHandler = async (e) => {
-    let input = e.target.value;
+
+  //search all makes by name
+  const searchHandler = async (input) => {
     setSearchInput(input);
     if (input.length) {
-      await searchMakes(input).then((res) => setSearchRes(res));
+      let res = await searchByNameAndAbrv(input, 'vehicleMake');
+      setSearchRes(res);
+      setMake(res[0].id);
     }
   };
 
@@ -65,48 +81,24 @@ export const ModelForm = observer(({ observable = dbStore }) => {
     if (paramId) {
       setItemAsDefault(paramId);
     } else {
-      setName('');
-      setAbrv('');
-      setMake('');
+      clearForm();
     }
-  }, [observable]);
+  }, [paramId]);
 
   return (
     <FormLayout submitHandler={onSubmit}>
       <FormInput inputValue={name} inputName={'Name'} onSetInput={setName} />
       <FormInput inputValue={abrv} inputName={'Abrv'} onSetInput={setAbrv} />
-      <label htmlFor='make'>Make</label>
-      <br />
-      <input id='make' value={searchInput} onChange={searchHandler}></input>
-      <br />
-      <select
-        required
-        size={5}
-        value={make}
-        onChange={(e) => setMake(e.target.value)}
-      >
-        {searchRes.map((res) => (
-          <option key={res.id} value={res.id}>
-            {res.abrv}
-          </option>
-        ))}
-      </select>
-      {/* <ul id='searchRes'>
-        {searchRes.map((res) => (
-          <li key={res.id}>
-            <button
-              type='button'
-              className={make === res.id ? 'selected' : ''}
-              onClick={(e) => {
-                setMake(res.id);
-                setSearchRes([res]);
-              }}
-            >
-              {res.abrv}
-            </button>
-          </li>
-        ))}
-      </ul> */}
+      <FormInput
+        inputValue={searchInput}
+        inputName={'Make'}
+        onSetInput={searchHandler}
+      />
+      <FormSearchResults
+        searchRes={searchRes}
+        make={make}
+        onSetMake={setMake}
+      />
       <ErrorMsg msg={error} />
     </FormLayout>
   );

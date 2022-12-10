@@ -50,10 +50,11 @@ export function APIUtils() {
     };
   };
 
-  const searchMakes = async (input) => {
+  const searchByNameAndAbrv = async (input, vehicleMake) => {
     const rawResponse = await fetch(
       path +
-        `vehicleMake/?page=1&rpp=5&searchQuery=WHERE name LIKE '%${input}%' OR abrv like '%${input}%'`,
+        vehicleMake +
+        `/?page=1&rpp=5&searchQuery=WHERE name LIKE '%${input}%' OR abrv like '%${input}%'`,
       {
         method: 'GET',
       }
@@ -62,13 +63,10 @@ export function APIUtils() {
 
     return await result.item;
   };
-  const getMakeById = async (id) => {
-    const rawResponse = await fetch(
-      path + `vehicleMake/?page=1&rpp=1&searchQuery=WHERE id = '${id}'`,
-      {
-        method: 'GET',
-      }
-    );
+  const findById = async (id, schemaName) => {
+    const rawResponse = await fetch(path + schemaName + `/${id}`, {
+      method: 'GET',
+    });
     const result = await rawResponse.json();
 
     return await result;
@@ -78,8 +76,8 @@ export function APIUtils() {
     fetchItems,
     addItem,
     delItem,
-    getMakeById,
+    findById,
     updateItem,
-    searchMakes,
+    searchByNameAndAbrv,
   };
 }

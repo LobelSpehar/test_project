@@ -8,9 +8,11 @@ export function Table({ list, total, schemaName, refresh }) {
   const [page, setPage] = useState(0);
   const [sortBy, setSortBy] = useState('name');
   const [rpp, setRpp] = useState(10);
+
   const onRefresh = () => {
     refresh(page, rpp, sortBy, schemaName);
   };
+
   useEffect(() => {
     onRefresh();
   }, [page, sortBy, rpp]);

@@ -10,7 +10,7 @@ import { FormInput } from 'components';
 import { FormLayout } from 'layouts';
 
 export const MakeForm = observer(({ observable = dbStore }) => {
-  const { addItem, updateItem } = APIUtils();
+  const { addItem, updateItem, findById } = APIUtils();
   const [name, setName] = useState('');
   const [abrv, setAbrv] = useState('');
   const schemaName = 'vehicleMake';
@@ -18,24 +18,32 @@ export const MakeForm = observer(({ observable = dbStore }) => {
   const paramId = useParams().id;
   const navigate = useNavigate();
 
-  const setItemAsDefault = (id) => {
-    //get name and abrv from paramId to set as default
-    let makesList = toJS(observable.makeList);
-    let defaultData = makesList.find((item) => item.id === id);
+  //empty all form fields
+  const clearForm = () => {
+    setName('');
+    setAbrv('');
+  };
+
+  //get name and abrv from paramId to set as default
+  const setItemAsDefault = async (id) => {
+    let defaultData = toJS(observable.getMakeById(id));
+    if (!defaultData) {
+      defaultData = await findById(id, schemaName);
+    }
     setName(defaultData.name);
     setAbrv(defaultData.abrv);
   };
+
+  //add make, or update if it already has id
   const onSubmit = (e) => {
     e.preventDefault();
 
-    //depending on paramId update or add new make
     if (paramId) {
       updateItem({ id: paramId, name: name, abrv: abrv }, schemaName);
       setTimeout(() => navigate('/home'), 200);
     } else {
       addItem({ id: paramId, name: name, abrv: abrv }, schemaName);
-      setName('');
-      setAbrv('');
+      clearForm();
     }
   };
 
@@ -43,8 +51,7 @@ export const MakeForm = observer(({ observable = dbStore }) => {
     if (paramId) {
       setItemAsDefault(paramId);
     } else {
-      setName('');
-      setAbrv('');
+      clearForm();
     }
   }, [paramId]);
 

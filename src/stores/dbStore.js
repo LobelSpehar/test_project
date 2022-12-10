@@ -14,8 +14,8 @@ class DbStore {
   }
 
   //store fetched data
-  saveData = action((total, list, schema) => {
-    if (schema === 'vehicleModel') {
+  saveData = action((total, list, schemaName) => {
+    if (schemaName === 'vehicleModel') {
       this.modelTotal = total;
       this.modelList = list;
     } else {
@@ -34,8 +34,8 @@ class DbStore {
   };
 
   //fetch by id local
-  getModelById = (id) => this.modelList.filter((item) => item.id === id);
-  getMakeById = (id) => this.makeList.filter((item) => item.id === id);
+  getModelById = (id) => this.modelList.filter((item) => item.id === id)[0];
+  getMakeById = (id) => this.makeList.filter((item) => item.id === id)[0];
 }
 
 export const dbStore = new DbStore();
