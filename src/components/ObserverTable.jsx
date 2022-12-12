@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { APIUtils } from 'common/utilities';
 import { TableRow, TableHead, Pagination } from 'components';
 
-export function Table({ list, total, schemaName, refresh }) {
+export function ObserverTable({ list, total, schemaName, refresh }) {
   const { delItem } = APIUtils();
   const [page, setPage] = useState(0);
   const [sortBy, setSortBy] = useState('name');

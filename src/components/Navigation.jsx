@@ -2,8 +2,14 @@ import { useLocation } from 'react-router-dom';
 
 import { NavBtn } from 'components';
 
-export function Navigation({ navLinks }) {
+export function Navigation() {
   const pathname = useLocation().pathname;
+  const navLinks = [
+    { path: '/home', title: 'Home' },
+    { path: '/add/vehicleMake/', title: 'Add make' },
+    { path: '/add/vehicleModel/', title: 'Add model' },
+  ];
+
   return (
     <nav>
       <ul>

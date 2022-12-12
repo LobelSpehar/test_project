@@ -5,11 +5,6 @@ import { Home, MakeForm, ModelForm } from 'pages';
 import { Layout } from 'layouts';
 
 function App() {
-  const navLinks = [
-    { path: '/home', title: 'Home' },
-    { path: '/add/vehicleMake/', title: 'Add make' },
-    { path: '/add/vehicleModel/', title: 'Add model' },
-  ];
   const pathname = useLocation().pathname;
   const navigate = useNavigate();
 
@@ -20,7 +15,7 @@ function App() {
   }, [pathname]);
 
   return (
-    <Layout navLinks={navLinks}>
+    <Layout>
       <Routes>
         <Route path='/home' element={<Home />} />
         <Route path='/add/vehicleModel/' element={<ModelForm />} />

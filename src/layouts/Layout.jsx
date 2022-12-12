@@ -1,9 +1,9 @@
 import { Navigation } from 'components';
 
-export function Layout({ children, navLinks }) {
+export function Layout({ children }) {
   return (
     <>
-      <Navigation navLinks={navLinks} />
+      <Navigation />
       <main>{children}</main>
     </>
   );

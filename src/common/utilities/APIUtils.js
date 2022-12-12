@@ -39,7 +39,9 @@ export function APIUtils() {
     schemaName
   ) => {
     const rawResponse = await fetch(
-      path + schemaName + `/?page=${page + 1}&rpp=${rpp}&sort=${sortBy}`,
+      path +
+        schemaName +
+        `/?page=${page + 1}&rpp=${rpp}&searchQuery=ORDER BY ${sortBy}`,
       { method: 'GET' }
     );
     const result = await rawResponse.json();

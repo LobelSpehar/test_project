@@ -36,7 +36,6 @@ export const ModelForm = observer(({ observable = dbStore }) => {
     let defaultData = toJS(observable.getModelById(id));
     if (!defaultData) {
       defaultData = await findById(id, schemaName);
-      console.log(defaultData);
     }
     setName(defaultData.name);
     setAbrv(defaultData.abrv);

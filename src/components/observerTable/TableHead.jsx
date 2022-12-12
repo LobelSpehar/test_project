@@ -1,4 +1,4 @@
-import { RppSelect } from 'components';
+import { RppSelect, SortByBtn } from 'components';
 
 export function TableHead({ obj, setSortBy, setRpp, setPage, rpp, total }) {
   const rppOptions = [5, 10, 15, 20];
@@ -21,7 +21,7 @@ export function TableHead({ obj, setSortBy, setRpp, setPage, rpp, total }) {
         <th>{total}</th>
         {thList.map((item) => (
           <th key={item}>
-            <button onClick={(e) => setSortBy(item)}>{item}</button>
+            <SortByBtn onSetSortBy={setSortBy} item={item} />
           </th>
         ))}
         <th>
