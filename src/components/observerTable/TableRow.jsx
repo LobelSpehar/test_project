@@ -1,13 +1,28 @@
 import { useNavigate } from 'react-router-dom';
 
-export function TableRow({ position, item, onDelete, onRefresh, schemaName }) {
+import Highlighter from 'react-highlight-words';
+
+export function TableRow({
+  position,
+  item,
+  onDelete,
+  onRefresh,
+  schemaName,
+  search,
+}) {
   const navigate = useNavigate();
   var trList = [];
 
-  //create table data for each property in object except id
+  //create table data for each property in object except id and highlight search result matches
   for (var key in item) {
     if (key !== 'id') {
-      trList.push(item[key]);
+      if (key === 'name' || key === 'abrv') {
+        trList.push(
+          <Highlighter searchWords={[search]} textToHighlight={item[key]} />
+        );
+      } else {
+        trList.push(item[key]);
+      }
     }
   }
 

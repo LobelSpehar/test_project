@@ -1,4 +1,4 @@
-export function FormInput({ inputValue, inputName, onSetInput }) {
+export function FormInput({ inputValue, inputName, onSetInput, isRequired }) {
   const eventHandler = (e) => {
     onSetInput(e.target.value);
   };
@@ -7,7 +7,7 @@ export function FormInput({ inputValue, inputName, onSetInput }) {
       <label htmlFor={inputName}>{inputName}</label>
       <br />
       <input
-        required
+        required={isRequired}
         type='text'
         id={inputName}
         value={inputValue}

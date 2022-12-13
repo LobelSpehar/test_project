@@ -49,7 +49,7 @@ export const ModelForm = observer(({ observable = dbStore }) => {
       setError('Make not found');
     }
   };
-
+  console.log(make);
   //add model, or update if it already has id
   const onSubmit = (e) => {
     e.preventDefault();
@@ -86,12 +86,23 @@ export const ModelForm = observer(({ observable = dbStore }) => {
 
   return (
     <FormLayout submitHandler={onSubmit}>
-      <FormInput inputValue={name} inputName={'Name'} onSetInput={setName} />
-      <FormInput inputValue={abrv} inputName={'Abrv'} onSetInput={setAbrv} />
+      <FormInput
+        inputValue={name}
+        inputName={'Name'}
+        onSetInput={setName}
+        isRequired={true}
+      />
+      <FormInput
+        inputValue={abrv}
+        inputName={'Abrv'}
+        onSetInput={setAbrv}
+        isRequired={true}
+      />
       <FormInput
         inputValue={searchInput}
         inputName={'Make'}
         onSetInput={searchHandler}
+        isRequired={false}
       />
       <FormSearchResults
         searchRes={searchRes}

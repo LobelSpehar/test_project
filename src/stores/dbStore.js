@@ -25,9 +25,9 @@ class DbStore {
   });
 
   //fetch data
-  refresh = async (page, rpp, sortBy, schemaName) => {
+  refresh = async (page, rpp, sortBy, search, schemaName) => {
     const { fetchItems } = APIUtils();
-    let result = await fetchItems(page, rpp, sortBy, schemaName);
+    let result = await fetchItems(page, rpp, sortBy, search, schemaName);
     runInAction(() => {
       this.saveData(result.total, result.list, schemaName);
     });

@@ -36,14 +36,18 @@ export function APIUtils() {
     page = 0,
     rpp = 10,
     sortBy = 'name',
+    search,
     schemaName
   ) => {
     const rawResponse = await fetch(
       path +
         schemaName +
-        `/?page=${page + 1}&rpp=${rpp}&searchQuery=ORDER BY ${sortBy}`,
+        `/?page=${
+          page + 1
+        }&rpp=${rpp}&searchQuery=Where name like '%25${search}%25' or abrv like '%25${search}%25' order by ${sortBy}`,
       { method: 'GET' }
     );
+
     const result = await rawResponse.json();
 
     return await {
@@ -56,7 +60,7 @@ export function APIUtils() {
     const rawResponse = await fetch(
       path +
         vehicleMake +
-        `/?page=1&rpp=5&searchQuery=WHERE name LIKE '%${input}%' OR abrv like '%${input}%'`,
+        `/?page=1&rpp=5&searchQuery=WHERE name LIKE '%25${input}%25' OR abrv like '%25${input}%25'`,
       {
         method: 'GET',
       }

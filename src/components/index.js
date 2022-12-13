@@ -10,6 +10,7 @@ export * from 'components/observerTable/TableHead';
 export * from 'components/observerTable/TableRow';
 export * from 'components/observerTable/tableHead/RppSelect';
 export * from 'components/observerTable/tableHead/SortByBtn';
+export * from 'components/observerTable/SearchBar';
 
 //form
 export * from 'components/form/ErrorMsg';
