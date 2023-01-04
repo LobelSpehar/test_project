@@ -2,7 +2,7 @@ export function APIUtils() {
   const path = process.env.REACT_APP_API_PATH;
 
   const addItem = async (data, schemaName) => {
-    const rawResponse = await fetch(path + schemaName, {
+    await fetch(path + schemaName, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -10,26 +10,29 @@ export function APIUtils() {
       },
       body: JSON.stringify(data),
     });
-    const result = await rawResponse.json();
   };
   const delItem = async (id, schemaName, refresh) => {
-    const rawResponse = await fetch(path + schemaName + '/' + id, {
-      method: 'DELETE',
-    }).then(() => {
+    try {
+      await fetch(path + schemaName + '/' + id, {
+        method: 'DELETE',
+      });
+    } finally {
       refresh();
-    });
-    const result = await rawResponse;
+    }
   };
-  const updateItem = async (data, schemaName) => {
-    const rawResponse = await fetch(path + schemaName + '/' + data.id, {
-      method: 'PUT',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    const result = await rawResponse;
+  const updateItem = async (data, schemaName, callback) => {
+    try {
+      await fetch(path + schemaName + '/' + data.id, {
+        method: 'PUT',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+    } finally {
+      callback();
+    }
   };
 
   const fetchItems = async (
@@ -50,7 +53,7 @@ export function APIUtils() {
 
     const result = await rawResponse.json();
 
-    return await {
+    return {
       total: result.totalRecords,
       list: result.item,
     };
@@ -67,7 +70,7 @@ export function APIUtils() {
     );
     const result = await rawResponse.json();
 
-    return await result.item;
+    return result.item;
   };
   const findById = async (id, schemaName) => {
     const rawResponse = await fetch(path + schemaName + `/${id}`, {
@@ -75,7 +78,7 @@ export function APIUtils() {
     });
     const result = await rawResponse.json();
 
-    return await result;
+    return result;
   };
 
   return {

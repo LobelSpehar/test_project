@@ -1,32 +1,47 @@
-import { RppSelect, SortByBtn } from 'components';
+import { RppSelect } from 'components';
 
-export function TableHead({ obj, setSortBy, setRpp, setPage, rpp, total }) {
+export function TableHead({ observable }) {
   const rppOptions = [5, 10, 15, 20];
   var thList = [];
 
   //create heading for each property in object except id
-  for (var key in obj) {
+  for (var key in observable.list[0]) {
     if (key !== 'id') {
       thList.push(key);
     }
   }
   const selectHandler = (e) => {
-    setRpp(e.target.value);
-    setPage(0);
+    observable.setRpp(e.target.value);
+    observable.setPage(0);
   };
 
   return thList.length ? (
     <thead>
       <tr>
-        <th>{total}</th>
+        <th>{observable.total}</th>
         {thList.map((item) => (
           <th key={item}>
-            <SortByBtn onSetSortBy={setSortBy} item={item} />
+            <button
+              onClick={(e) => {
+                observable.setSortBy(item);
+              }}
+            >
+              {item}
+              {observable.sortBy === item ? (
+                observable.asc ? (
+                  <> &darr;</>
+                ) : (
+                  <> &uarr;</>
+                )
+              ) : (
+                ''
+              )}
+            </button>
           </th>
         ))}
         <th>
           <RppSelect
-            rpp={rpp}
+            rpp={observable.rpp}
             selectHandler={selectHandler}
             rppOptions={rppOptions}
           />

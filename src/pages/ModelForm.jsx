@@ -49,7 +49,7 @@ export const ModelForm = observer(({ observable = dbStore }) => {
       setError('Make not found');
     }
   };
-  console.log(make);
+
   //add model, or update if it already has id
   const onSubmit = (e) => {
     e.preventDefault();
@@ -57,9 +57,11 @@ export const ModelForm = observer(({ observable = dbStore }) => {
     if (paramId) {
       updateItem(
         { id: paramId, name: name, abrv: abrv, makeId: make },
-        schemaName
+        schemaName,
+        () => {
+          navigate('/home');
+        }
       );
-      setTimeout(() => navigate('/home'), 200);
     } else {
       addItem({ id: null, name: name, abrv: abrv, makeId: make }, schemaName);
       clearForm();

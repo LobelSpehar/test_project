@@ -2,14 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Highlighter from 'react-highlight-words';
 
-export function TableRow({
-  position,
-  item,
-  onDelete,
-  onRefresh,
-  schemaName,
-  search,
-}) {
+export function TableRow({ index, item, onDelete, observable }) {
   const navigate = useNavigate();
   var trList = [];
 
@@ -18,7 +11,10 @@ export function TableRow({
     if (key !== 'id') {
       if (key === 'name' || key === 'abrv') {
         trList.push(
-          <Highlighter searchWords={[search]} textToHighlight={item[key]} />
+          <Highlighter
+            searchWords={[observable.search]}
+            textToHighlight={item[key]}
+          />
         );
       } else {
         trList.push(item[key]);
@@ -28,21 +24,23 @@ export function TableRow({
 
   return (
     <tr>
-      <td>{position}</td>
+      <td>{observable.page * observable.rpp + index + 1}</td>
       {trList.map((item, index) => (
         <td key={index}>{item}</td>
       ))}
       <td>
         <button
           onClick={(e) => {
-            navigate(`/edit/${schemaName}/${item.id}`);
+            navigate(`/edit/${observable.schemaName}/${item.id}`);
           }}
         >
           Edit
         </button>
         <button
           onClick={(e) => {
-            onDelete(item.id, schemaName, onRefresh);
+            onDelete(item.id, observable.schemaName, () => {
+              observable.refresh();
+            });
           }}
         >
           Delete

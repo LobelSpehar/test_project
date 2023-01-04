@@ -130,12 +130,12 @@ form {
 }
 h2 {
   width: fit-content;
-  margin: auto;
   padding: 10px;
   background-color: #009879;
   color: white;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  margin: 0px;
 }
 .searchBar {
   padding: 3px;
@@ -146,4 +146,12 @@ h2 {
 }
 .searchBar input {
   margin: 5px;
+}
+#tableNav {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
+.active {
+  background-color: #01b893;
 }

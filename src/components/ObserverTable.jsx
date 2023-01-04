@@ -1,67 +1,61 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { APIUtils } from 'common/utilities';
 import { TableRow, TableHead, Pagination, SearchBar } from 'components';
+import { observer } from 'mobx-react';
+import { dbStore } from 'stores';
 
-export function ObserverTable({ list, total, schemaName, refresh }) {
+export const ObserverTable = observer(({ observable = dbStore, options }) => {
   const { delItem } = APIUtils();
-  const [page, setPage] = useState(0);
-  const [sortBy, setSortBy] = useState('name');
-  const [rpp, setRpp] = useState(10);
-  const [search, setSearch] = useState('');
 
-  const onRefresh = () => {
-    refresh(page, rpp, sortBy, search, schemaName);
-  };
-
+  //making sure useEffect makes only 1 api call on mount
   useEffect(() => {
-    onRefresh();
-  }, [page, sortBy, rpp, search]);
+    if (!observable.schemaName) {
+      observable.setSchemaName(options[1]);
+    }
+  }, []);
 
-  //after deleting last item on the page,go to previous page
-  if (total - rpp * page === 0 && page !== 0) {
-    setPage(page - 1);
-  }
   const searchHandler = (e) => {
-    setSearch(e.target.value);
-    if (page) {
-      setPage(0);
+    observable.setSearch(e.target.value);
+    if (observable.page) {
+      observable.setPage(0);
     }
   };
   return (
     <div>
-      <h2>{schemaName}</h2>
-      <SearchBar
-        schemaName={schemaName}
-        search={search}
-        searchHandler={searchHandler}
-      />
+      <div id='tableNav'>
+        {options.map((option) => (
+          <h2
+            key={option}
+            className={option === observable.schemaName ? 'active' : ''}
+          >
+            <button
+              disabled={option === observable.schemaName}
+              className={option === observable.schemaName ? 'active' : ''}
+              onClick={(e) => observable.setSchemaName(option)}
+            >
+              {option}
+            </button>
+          </h2>
+        ))}
+      </div>
+
+      <SearchBar search={observable.search} searchHandler={searchHandler} />
       <table>
-        <TableHead
-          obj={list[0]}
-          setSortBy={setSortBy}
-          setRpp={setRpp}
-          setPage={setPage}
-          rpp={rpp}
-          total={total}
-        />
+        <TableHead observable={observable} />
         <tbody>
-          {list.map((item, index) => (
+          {observable.list.map((item, index) => (
             <TableRow
               key={item.id}
-              position={page * rpp + index + 1}
+              index={index}
               item={item}
               onDelete={delItem}
-              onRefresh={onRefresh}
-              schemaName={schemaName}
-              search={search}
+              observable={observable}
             />
           ))}
         </tbody>
       </table>
-      {total ? (
-        <Pagination total={total} page={page} setPage={setPage} rpp={rpp} />
-      ) : null}
+      {observable.total ? <Pagination observable={observable} /> : null}
     </div>
   );
-}
+});

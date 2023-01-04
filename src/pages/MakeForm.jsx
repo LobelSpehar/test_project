@@ -39,8 +39,9 @@ export const MakeForm = observer(({ observable = dbStore }) => {
     e.preventDefault();
 
     if (paramId) {
-      updateItem({ id: paramId, name: name, abrv: abrv }, schemaName);
-      setTimeout(() => navigate('/home'), 200);
+      updateItem({ id: paramId, name: name, abrv: abrv }, schemaName, () => {
+        navigate('/home');
+      });
     } else {
       addItem({ id: paramId, name: name, abrv: abrv }, schemaName);
       clearForm();

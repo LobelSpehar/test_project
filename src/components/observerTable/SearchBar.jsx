@@ -1,10 +1,10 @@
-export function SearchBar({ schemaName, search, searchHandler }) {
+export function SearchBar({ search, searchHandler }) {
   return (
     <div className='searchBar'>
-      <label htmlFor={`search${schemaName}`}>Search : </label>
+      <label htmlFor={`search`}>Search : </label>
       <br />
       <input
-        id={`search${schemaName}`}
+        id={`search`}
         value={search}
         onChange={searchHandler}
         onBlur={searchHandler}

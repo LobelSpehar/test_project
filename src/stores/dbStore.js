@@ -1,41 +1,88 @@
-import { action, makeAutoObservable, observable, runInAction } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 
 import { APIUtils } from 'common/utilities';
 
-class DbStore {
+class DBStore {
   //stored data
-  makeTotal = observable(0);
-  makeList = observable.array([]);
-  modelTotal = observable(0);
-  modelList = observable.array([]);
+  total = 0;
+  list = [];
+  page = 0;
+  sortBy = 'name';
+  rpp = 10;
+  search = '';
+  schemaName = '';
+  asc = true;
 
   constructor() {
-    makeAutoObservable(this);
+    makeObservable(this, {
+      total: observable,
+      list: observable,
+      page: observable,
+      sortBy: observable,
+      rpp: observable,
+      search: observable,
+      schemaName: observable,
+      asc: observable,
+    });
   }
 
-  //store fetched data
-  saveData = action((total, list, schemaName) => {
-    if (schemaName === 'vehicleModel') {
-      this.modelTotal = total;
-      this.modelList = list;
+  //setState
+  setPage = action((val) => {
+    this.page = this.page + val;
+    this.refresh();
+  });
+  setSortBy = action((val) => {
+    if (this.sortBy === val) {
+      this.toggleAsc();
     } else {
-      this.makeTotal = total;
-      this.makeList = list;
+      this.sortBy = val;
+      this.asc = true;
     }
+    this.refresh();
+  });
+  setRpp = action((val) => {
+    this.rpp = val;
+    this.refresh();
+  });
+  setSearch = action((val) => {
+    this.search = val;
+    this.refresh();
+  });
+  setSchemaName = action((val) => {
+    this.schemaName = val;
+    this.page = 0;
+    this.sortBy = 'name';
+    this.rpp = 10;
+    this.search = '';
+    this.asc = true;
+    this.refresh();
+  });
+  toggleAsc = action(() => {
+    this.asc = !this.asc;
+    this.refresh();
+  });
+
+  //store fetched data
+  saveData = action((total, list) => {
+    this.total = total;
+    this.list = list;
   });
 
   //fetch data
-  refresh = async (page, rpp, sortBy, search, schemaName) => {
+  refresh = async () => {
     const { fetchItems } = APIUtils();
-    let result = await fetchItems(page, rpp, sortBy, search, schemaName);
-    runInAction(() => {
-      this.saveData(result.total, result.list, schemaName);
-    });
+    let result = await fetchItems(
+      this.page,
+      this.rpp,
+      `${this.sortBy} ${this.asc ? 'ASC' : 'DESC'}`,
+      this.search,
+      this.schemaName
+    );
+    this.saveData(result.total, result.list);
   };
 
   //fetch by id local
-  getModelById = (id) => this.modelList.filter((item) => item.id === id)[0];
-  getMakeById = (id) => this.makeList.filter((item) => item.id === id)[0];
+  getItemById = (id) => this.list.filter((item) => item.id === id)[0];
 }
 
-export const dbStore = new DbStore();
+export const dbStore = new DBStore();
