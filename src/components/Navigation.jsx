@@ -8,6 +8,7 @@ export function Navigation() {
     { path: '/home', title: 'Home' },
     { path: '/add/vehicleMake/', title: 'Add make' },
     { path: '/add/vehicleModel/', title: 'Add model' },
+    { path: '/add/vehicle/', title: 'Add vehicle' },
   ];
 
   return (

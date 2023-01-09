@@ -2,20 +2,20 @@ import { useParams } from 'react-router-dom';
 
 import { observer } from 'mobx-react-lite';
 
-import { resultsStore, dbStore, modelForm } from 'stores';
+import { vehicleForm, resultsStore, dbStore } from 'stores';
 import { APIUtils } from 'common/utilities';
 import { toJS } from 'mobx';
 import { useEffect } from 'react';
 import { FormLayout } from 'layouts';
 
-export const ModelForm = observer(
-  ({ form = modelForm, result = resultsStore, observable = dbStore }) => {
+export const VehicleForm = observer(
+  ({ form = vehicleForm, result = resultsStore, observable = dbStore }) => {
     const { findById } = APIUtils();
 
     const paramId = useParams().id;
 
-    const schemaName = 'vehicleModel';
-    const foreignKey = 'vehicleMake';
+    const schemaName = 'vehicle';
+    const foreignKey = 'vehicleModel';
 
     //get name and abrv from paramId to set as default
     const setItemAsDefault = async (id) => {
@@ -23,11 +23,12 @@ export const ModelForm = observer(
       if (!defaultData) {
         defaultData = await findById(id, schemaName);
       }
-      form.$('abrv').set(defaultData.abrv);
-      form.$('name').set(defaultData.name);
+      form.$('price').set(defaultData.price);
+      form.$('year').set(defaultData.year);
+      form.$('odometer').set(defaultData.odometer);
       form.$('id').set(paramId);
-      form.$('makeId').set(defaultData.makeId);
-      result.getItemById(defaultData.makeId, foreignKey);
+      form.$('modelId').set(defaultData.modelId);
+      result.getItemById(defaultData.modelId, foreignKey);
     };
 
     useEffect(() => {
@@ -38,22 +39,28 @@ export const ModelForm = observer(
       }
       return result.clear();
     }, [paramId]);
-
     const submitHandler = (e) => {
       form.onSubmit(e);
       result.clear();
     };
     return (
       <FormLayout submitHandler={submitHandler}>
-        <label htmlFor={form.$('abrv').id}>{form.$('abrv').label}</label>
+        <label htmlFor={form.$('price').id}>{form.$('price').label}</label>
         <br />
-        <input {...form.$('abrv').bind()} />
-        <p>{form.$('abrv').error}</p>
+        <input {...form.$('price').bind()} />
+        <p>{form.$('price').error}</p>
 
-        <label htmlFor={form.$('name').id}>{form.$('name').label}</label>
+        <label htmlFor={form.$('year').id}>{form.$('year').label}</label>
         <br />
-        <input {...form.$('name').bind()} />
-        <p>{form.$('name').error}</p>
+        <input {...form.$('year').bind()} />
+        <p>{form.$('year').error}</p>
+
+        <label htmlFor={form.$('odometer').id}>
+          {form.$('odometer').label}
+        </label>
+        <br />
+        <input {...form.$('odometer').bind()} />
+        <p>{form.$('odometer').error}</p>
 
         <label htmlFor='search'>Search</label>
         <br />
@@ -64,16 +71,20 @@ export const ModelForm = observer(
         />
         <p>{result.error}</p>
 
-        <label htmlFor={form.$('makeId').id}>{form.$('makeId').label}</label>
+        <label htmlFor={form.$('modelId').id}>{form.$('modelId').label}</label>
+
         <br />
-        <select size='5' onChange={(e) => form.$('makeId').set(e.target.value)}>
+        <select
+          size='5'
+          onChange={(e) => form.$('modelId').set(e.target.value)}
+        >
           {result.searchResults.map((res) => (
             <option key={res.id} value={res.id}>
               {res.abrv}
             </option>
           ))}
         </select>
-        <p>{form.$('makeId').error}</p>
+        <p>{form.$('modelId').error}</p>
 
         <p>{form.error}</p>
       </FormLayout>

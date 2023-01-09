@@ -1,65 +1,59 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { observer } from 'mobx-react-lite';
-import { toJS } from 'mobx';
 
-import { dbStore } from 'stores';
+import { resultsStore, dbStore, makeForm } from 'stores';
 import { APIUtils } from 'common/utilities';
-import { FormInput } from 'components';
+import { toJS } from 'mobx';
+import { useEffect } from 'react';
 import { FormLayout } from 'layouts';
 
-export const MakeForm = observer(({ observable = dbStore }) => {
-  const { addItem, updateItem, findById } = APIUtils();
-  const [name, setName] = useState('');
-  const [abrv, setAbrv] = useState('');
-  const schemaName = 'vehicleMake';
+export const MakeForm = observer(
+  ({ form = makeForm, result = resultsStore, observable = dbStore }) => {
+    const { findById } = APIUtils();
 
-  const paramId = useParams().id;
-  const navigate = useNavigate();
+    const paramId = useParams().id;
 
-  //empty all form fields
-  const clearForm = () => {
-    setName('');
-    setAbrv('');
-  };
+    const schemaName = 'vehicleMake';
 
-  //get name and abrv from paramId to set as default
-  const setItemAsDefault = async (id) => {
-    let defaultData = toJS(observable.getMakeById(id));
-    if (!defaultData) {
-      defaultData = await findById(id, schemaName);
-    }
-    setName(defaultData.name);
-    setAbrv(defaultData.abrv);
-  };
+    //get name and abrv from paramId to set as default
+    const setItemAsDefault = async (id) => {
+      let defaultData = toJS(observable.getItemById(id));
+      if (!defaultData) {
+        defaultData = await findById(id, schemaName);
+      }
+      form.$('abrv').set(defaultData.abrv);
+      form.$('name').set(defaultData.name);
+      form.$('id').set(paramId);
+    };
 
-  //add make, or update if it already has id
-  const onSubmit = (e) => {
-    e.preventDefault();
+    useEffect(() => {
+      if (paramId) {
+        setItemAsDefault(paramId);
+      } else {
+        form.clear();
+      }
+      return result.clear();
+    }, [paramId]);
 
-    if (paramId) {
-      updateItem({ id: paramId, name: name, abrv: abrv }, schemaName, () => {
-        navigate('/home');
-      });
-    } else {
-      addItem({ id: paramId, name: name, abrv: abrv }, schemaName);
-      clearForm();
-    }
-  };
+    const submitHandler = (e) => {
+      form.onSubmit(e);
+      result.clear();
+    };
+    return (
+      <FormLayout submitHandler={submitHandler}>
+        <label htmlFor={form.$('abrv').id}>{form.$('abrv').label}</label>
+        <br />
+        <input {...form.$('abrv').bind()} />
+        <p>{form.$('abrv').error}</p>
 
-  useEffect(() => {
-    if (paramId) {
-      setItemAsDefault(paramId);
-    } else {
-      clearForm();
-    }
-  }, [paramId]);
+        <label htmlFor={form.$('name').id}>{form.$('name').label}</label>
+        <br />
+        <input {...form.$('name').bind()} />
+        <p>{form.$('name').error}</p>
 
-  return (
-    <FormLayout submitHandler={onSubmit}>
-      <FormInput inputValue={name} inputName={'Name'} onSetInput={setName} />
-      <FormInput inputValue={abrv} inputName={'Abrv'} onSetInput={setAbrv} />
-    </FormLayout>
-  );
-});
+        <p>{form.error}</p>
+      </FormLayout>
+    );
+  }
+);

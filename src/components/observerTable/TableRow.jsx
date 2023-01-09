@@ -4,12 +4,12 @@ import Highlighter from 'react-highlight-words';
 
 export function TableRow({ index, item, onDelete, observable }) {
   const navigate = useNavigate();
-  var trList = [];
+  let trList = [];
 
   //create table data for each property in object except id and highlight search result matches
-  for (var key in item) {
+  for (let key in item) {
     if (key !== 'id') {
-      if (key === 'name' || key === 'abrv') {
+      if (!key.toLowerCase().includes('id')) {
         trList.push(
           <Highlighter
             searchWords={[observable.search]}

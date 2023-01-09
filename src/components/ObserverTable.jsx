@@ -7,12 +7,14 @@ import { dbStore } from 'stores';
 
 export const ObserverTable = observer(({ observable = dbStore, options }) => {
   const { delItem } = APIUtils();
+  let renderCount = 0;
 
   //making sure useEffect makes only 1 api call on mount
   useEffect(() => {
-    if (!observable.schemaName) {
-      observable.setSchemaName(options[1]);
+    if (!renderCount) {
+      observable.setSchemaName(options[0]);
     }
+    renderCount++;
   }, []);
 
   const searchHandler = (e) => {
@@ -38,6 +40,7 @@ export const ObserverTable = observer(({ observable = dbStore, options }) => {
             </button>
           </h2>
         ))}
+        {observable.loading ? <h2>Loading...</h2> : null}
       </div>
 
       <SearchBar search={observable.search} searchHandler={searchHandler} />

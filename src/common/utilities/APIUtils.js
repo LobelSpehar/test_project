@@ -20,34 +20,26 @@ export function APIUtils() {
       refresh();
     }
   };
-  const updateItem = async (data, schemaName, callback) => {
-    try {
-      await fetch(path + schemaName + '/' + data.id, {
-        method: 'PUT',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-    } finally {
-      callback();
-    }
+  const updateItem = async (data, schemaName) => {
+    await fetch(path + schemaName + '/' + data.id, {
+      method: 'PUT',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
   };
 
-  const fetchItems = async (
-    page = 0,
-    rpp = 10,
-    sortBy = 'name',
-    search,
-    schemaName
-  ) => {
+  const fetchItems = async (page = 0, rpp = 10, sortBy, search, schemaName) => {
+    let searchQuery = `Where name like '%25${search}%25' or abrv like '%25${search}%25' order by ${sortBy}`;
+    if (schemaName === 'vehicle') {
+      searchQuery = `Where year like '%25${search}%25' or price like '%25${search}%25' or odometer like '%25${search}%25' order by ${sortBy}`;
+    }
     const rawResponse = await fetch(
       path +
         schemaName +
-        `/?page=${
-          page + 1
-        }&rpp=${rpp}&searchQuery=Where name like '%25${search}%25' or abrv like '%25${search}%25' order by ${sortBy}`,
+        `/?page=${page + 1}&rpp=${rpp}&searchQuery=${searchQuery}`,
       { method: 'GET' }
     );
 
@@ -59,10 +51,10 @@ export function APIUtils() {
     };
   };
 
-  const searchByNameAndAbrv = async (input, vehicleMake) => {
+  const searchByNameAndAbrv = async (input, schemaName) => {
     const rawResponse = await fetch(
       path +
-        vehicleMake +
+        schemaName +
         `/?page=1&rpp=5&searchQuery=WHERE name LIKE '%25${input}%25' OR abrv like '%25${input}%25'`,
       {
         method: 'GET',

@@ -12,6 +12,7 @@ class DBStore {
   search = '';
   schemaName = '';
   asc = true;
+  loading = true;
 
   constructor() {
     makeObservable(this, {
@@ -23,6 +24,7 @@ class DBStore {
       search: observable,
       schemaName: observable,
       asc: observable,
+      loading: observable,
     });
   }
 
@@ -51,7 +53,11 @@ class DBStore {
   setSchemaName = action((val) => {
     this.schemaName = val;
     this.page = 0;
-    this.sortBy = 'name';
+    if (this.schemaName === 'vehicle') {
+      this.sortBy = 'year';
+    } else {
+      this.sortBy = 'name';
+    }
     this.rpp = 10;
     this.search = '';
     this.asc = true;
@@ -67,11 +73,15 @@ class DBStore {
     this.total = total;
     this.list = list;
   });
-
+  setLoading = action((state) => {
+    this.loading = state;
+  });
   //fetch data
   refresh = async () => {
+    this.setLoading(true);
+
     const { fetchItems } = APIUtils();
-    let result = await fetchItems(
+    const result = await fetchItems(
       this.page,
       this.rpp,
       `${this.sortBy} ${this.asc ? 'ASC' : 'DESC'}`,
@@ -79,6 +89,7 @@ class DBStore {
       this.schemaName
     );
     this.saveData(result.total, result.list);
+    this.setLoading(false);
   };
 
   //fetch by id local

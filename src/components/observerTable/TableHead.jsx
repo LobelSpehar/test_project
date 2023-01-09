@@ -2,10 +2,10 @@ import { RppSelect } from 'components';
 
 export function TableHead({ observable }) {
   const rppOptions = [5, 10, 15, 20];
-  var thList = [];
+  let thList = [];
 
   //create heading for each property in object except id
-  for (var key in observable.list[0]) {
+  for (let key in observable.list[0]) {
     if (key !== 'id') {
       thList.push(key);
     }
