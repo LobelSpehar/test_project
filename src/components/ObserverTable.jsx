@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 
-import { APIUtils } from 'common/utilities';
-import { TableRow, TableHead, Pagination, SearchBar } from 'components';
 import { observer } from 'mobx-react';
+
+import { TableRow, TableHead, Pagination, SearchBar } from 'components';
+import { APIUtils } from 'common/utilities';
 import { dbStore } from 'stores';
 
 export const ObserverTable = observer(({ observable = dbStore, options }) => {

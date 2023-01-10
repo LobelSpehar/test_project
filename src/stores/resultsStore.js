@@ -18,16 +18,20 @@ class ResultsStore {
   //setState
   setInput = action((val, schemaName) => {
     this.input = val;
-    this.search(val, schemaName);
+    if (val) {
+      this.search(val, schemaName);
+    }
   });
   setSearchResults = action((val) => (this.searchResults = val));
   setError = action((val) => (this.error = val));
 
+  //clear all fields
   clear = () => {
     this.setInput('');
     this.setSearchResults([]);
     this.setError('');
   };
+
   //fetch data
   search = async (input, schemaName) => {
     const { searchByNameAndAbrv } = APIUtils();

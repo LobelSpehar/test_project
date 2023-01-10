@@ -1,11 +1,11 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { observer } from 'mobx-react-lite';
+import { toJS } from 'mobx';
 
 import { resultsStore, dbStore, modelForm } from 'stores';
 import { APIUtils } from 'common/utilities';
-import { toJS } from 'mobx';
-import { useEffect } from 'react';
 import { FormLayout } from 'layouts';
 
 export const ModelForm = observer(
@@ -29,12 +29,10 @@ export const ModelForm = observer(
       form.$('makeId').set(defaultData.makeId);
       result.getItemById(defaultData.makeId, foreignKey);
     };
-
+    //checking if paramId exists and making sure it makes 1 api call by checking if we already have a result
     useEffect(() => {
-      if (paramId) {
+      if (paramId && !result.searchResults.length) {
         setItemAsDefault(paramId);
-      } else {
-        form.clear();
       }
       return result.clear();
     }, [paramId]);

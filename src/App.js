@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
-import { Home, MakeForm, ModelForm } from 'pages';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Home, MakeForm, ModelForm, VehicleForm } from 'pages';
 import { Layout } from 'layouts';
-import { VehicleForm } from 'pages/VehicleForm';
 
 function App() {
   const pathname = useLocation().pathname;
@@ -17,6 +19,18 @@ function App() {
 
   return (
     <Layout>
+      <ToastContainer
+        position='top-center'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='light'
+      />
       <Routes>
         <Route path='/home' element={<Home />} />
         <Route path='/add/vehicleModel/' element={<ModelForm />} />

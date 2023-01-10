@@ -1,6 +1,5 @@
 import { APIUtils } from 'common/utilities';
 import MobxReactForm from 'mobx-react-form';
-
 import dvr from 'mobx-react-form/lib/validators/DVR';
 import validatorjs from 'validatorjs';
 
@@ -15,7 +14,6 @@ const fields = [
     label: 'abrv',
     placeholder: 'Insert abrv',
     rules: 'required|string',
-    value: 'test',
   },
   {
     name: 'name',
