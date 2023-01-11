@@ -82,7 +82,7 @@ export function APIUtils() {
           method: 'GET',
         }
       );
-      const result = rawResponse.json();
+      const result = await rawResponse.json();
 
       return result.item;
     } catch (error) {
@@ -98,7 +98,6 @@ export function APIUtils() {
 
       return result;
     } catch (error) {
-      console.log(error);
       errorMsg(error.message);
     }
   };

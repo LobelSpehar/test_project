@@ -31,7 +31,10 @@ export const MakeForm = observer(
       if (paramId && !result.searchResults.length) {
         setItemAsDefault(paramId);
       }
-      return result.clear();
+      return () => {
+        result.clear();
+        form.clear();
+      };
     }, [paramId]);
 
     const submitHandler = (e) => {

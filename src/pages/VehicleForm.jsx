@@ -35,7 +35,10 @@ export const VehicleForm = observer(
       if (paramId && !result.searchResults.length) {
         setItemAsDefault(paramId);
       }
-      return result.clear();
+      return () => {
+        result.clear();
+        form.clear();
+      };
     }, []);
     const submitHandler = (e) => {
       form.onSubmit(e);

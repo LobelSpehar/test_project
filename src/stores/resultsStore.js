@@ -35,8 +35,8 @@ class ResultsStore {
   //fetch data
   search = async (input, schemaName) => {
     const { searchByNameAndAbrv } = APIUtils();
+    console.log(input, schemaName);
     const result = await searchByNameAndAbrv(input, schemaName);
-
     this.setSearchResults(result);
   };
 
